@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, ArrowRight, Save } from "lucide-react";
+import { ArrowLeft, ArrowRight, Save, User } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import AnamneseNav from "@/components/anamnese/AnamneseNav";
-import DadosPessoais from "@/components/anamnese/DadosPessoais";
 import QueixaPrincipal from "@/components/anamnese/QueixaPrincipal";
 import DadosClinicos from "@/components/anamnese/DadosClinicos";
 import TratamentosAnteriores from "@/components/anamnese/TratamentosAnteriores";
@@ -17,7 +17,6 @@ import Tricoscopia from "@/components/anamnese/Tricoscopia";
 import Informacoes from "@/components/anamnese/Informacoes";
 
 const sections = [
-  { id: "dados-pessoais", label: "Dados Pessoais" },
   { id: "queixa-principal", label: "Queixa Principal" },
   { id: "dados-clinicos", label: "Dados Clínicos" },
   { id: "tratamentos-anteriores", label: "Tratamentos Anteriores" },
@@ -32,10 +31,51 @@ const sections = [
 const Anamnese = () => {
   const [currentSection, setCurrentSection] = useState(0);
   const [formData, setFormData] = useState<Record<string, any>>({});
+  const [cliente, setCliente] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { clienteId } = useParams();
 
   const progress = ((currentSection + 1) / sections.length) * 100;
+
+  useEffect(() => {
+    if (!clienteId) {
+      navigate("/anamnese/selecionar-cliente");
+      return;
+    }
+    fetchCliente();
+  }, [clienteId]);
+
+  const fetchCliente = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("clientes")
+        .select("*")
+        .eq("id", clienteId)
+        .eq("user_id", user.id)
+        .single();
+
+      if (error) throw error;
+      setCliente(data);
+    } catch (error) {
+      console.error("Error fetching cliente:", error);
+      toast({
+        title: "Erro ao carregar cliente",
+        description: "Não foi possível carregar os dados do cliente.",
+        variant: "destructive",
+      });
+      navigate("/anamnese/selecionar-cliente");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleNext = () => {
     if (currentSection < sections.length - 1) {
@@ -53,12 +93,42 @@ const Anamnese = () => {
     setCurrentSection(index);
   };
 
-  const handleSave = () => {
-    toast({
-      title: "Anamnese salva!",
-      description: "Os dados foram salvos com sucesso.",
-    });
-    navigate("/dashboard");
+  const handleSave = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Usuário não autenticado");
+
+      const { error } = await supabase.from("avaliacoes").insert([
+        {
+          cliente_id: clienteId,
+          user_id: user.id,
+          queixa_principal: formData["queixa-principal"],
+          dados_clinicos: formData["dados-clinicos"],
+          tratamentos_anteriores: formData["tratamentos-anteriores"],
+          historico_saude: formData["historico-saude"],
+          habitos: formData["habitos"],
+          historico_familiar: formData["historico-familiar"],
+          exame_fisico: formData["exame-fisico"],
+          tricoscopia: formData["tricoscopia"],
+          informacoes: formData["informacoes"],
+        },
+      ]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Avaliação salva!",
+        description: "A avaliação foi salva com sucesso.",
+      });
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error saving avaliacao:", error);
+      toast({
+        title: "Erro ao salvar avaliação",
+        description: "Não foi possível salvar a avaliação.",
+        variant: "destructive",
+      });
+    }
   };
 
   const updateFormData = (sectionId: string, data: any) => {
@@ -74,8 +144,6 @@ const Anamnese = () => {
     const updateData = (data: any) => updateFormData(sectionId, data);
 
     switch (sectionId) {
-      case "dados-pessoais":
-        return <DadosPessoais data={sectionData} updateData={updateData} />;
       case "queixa-principal":
         return <QueixaPrincipal data={sectionData} updateData={updateData} />;
       case "dados-clinicos":
@@ -99,6 +167,17 @@ const Anamnese = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen gradient-card flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen gradient-card">
       <header className="bg-card/80 backdrop-blur-sm border-b">
@@ -116,9 +195,14 @@ const Anamnese = () => {
               <h1 className="text-xl font-heading font-bold">
                 Nova Avaliação Capilar
               </h1>
-              <p className="text-sm text-muted-foreground">
-                Do couro cabeludo à solução: análise completa em um só lugar
-              </p>
+              {cliente && (
+                <div className="flex items-center gap-2 mt-1">
+                  <User className="h-4 w-4 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">
+                    Cliente: {cliente.nome} • {cliente.telefone}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

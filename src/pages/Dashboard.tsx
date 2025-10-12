@@ -10,6 +10,10 @@ import type { User } from "@supabase/supabase-js";
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [clientesCount, setClientesCount] = useState(0);
+  const [avaliacoesCount, setAvaliacoesCount] = useState(0);
+  const [avaliacoesThisMonth, setAvaliacoesThisMonth] = useState(0);
+  const [recentAvaliacoes, setRecentAvaliacoes] = useState<any[]>([]);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -23,6 +27,7 @@ const Dashboard = () => {
       }
       
       setUser(user);
+      await fetchStats(user.id);
       setLoading(false);
     };
 
@@ -38,6 +43,55 @@ const Dashboard = () => {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  const fetchStats = async (userId: string) => {
+    try {
+      // Count clientes
+      const { count: clientesCount } = await supabase
+        .from("clientes")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", userId);
+      
+      setClientesCount(clientesCount || 0);
+
+      // Count avaliacoes
+      const { count: avaliacoesCount } = await supabase
+        .from("avaliacoes")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", userId);
+      
+      setAvaliacoesCount(avaliacoesCount || 0);
+
+      // Count avaliacoes this month
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+      
+      const { count: monthCount } = await supabase
+        .from("avaliacoes")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .gte("created_at", startOfMonth.toISOString());
+      
+      setAvaliacoesThisMonth(monthCount || 0);
+
+      // Fetch recent avaliacoes
+      const { data: recentData } = await supabase
+        .from("avaliacoes")
+        .select(`
+          id,
+          created_at,
+          cliente:clientes(nome)
+        `)
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(5);
+      
+      setRecentAvaliacoes(recentData || []);
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    }
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -96,7 +150,7 @@ const Dashboard = () => {
               <div className="p-3 rounded-lg bg-accent/10">
                 <Users className="h-6 w-6 text-accent" />
               </div>
-              <span className="text-2xl font-bold">0</span>
+              <span className="text-2xl font-bold">{clientesCount}</span>
             </div>
             <h3 className="font-heading font-semibold mb-1">Clientes</h3>
             <p className="text-sm text-muted-foreground">
@@ -109,7 +163,7 @@ const Dashboard = () => {
               <div className="p-3 rounded-lg bg-purple/10">
                 <FileText className="h-6 w-6 text-purple" />
               </div>
-              <span className="text-2xl font-bold">0</span>
+              <span className="text-2xl font-bold">{avaliacoesCount}</span>
             </div>
             <h3 className="font-heading font-semibold mb-1">Avaliações</h3>
             <p className="text-sm text-muted-foreground">
@@ -122,7 +176,7 @@ const Dashboard = () => {
               <div className="p-3 rounded-lg bg-secondary/10">
                 <FileText className="h-6 w-6 text-secondary" />
               </div>
-              <span className="text-2xl font-bold">0</span>
+              <span className="text-2xl font-bold">{avaliacoesThisMonth}</span>
             </div>
             <h3 className="font-heading font-semibold mb-1">Este mês</h3>
             <p className="text-sm text-muted-foreground">
@@ -139,7 +193,7 @@ const Dashboard = () => {
             <div className="space-y-3">
               <Button
                 className="w-full justify-start gradient-primary"
-                onClick={() => navigate("/anamnese")}
+                onClick={() => navigate("/anamnese/selecionar-cliente")}
               >
                 <PlusCircle className="h-4 w-4 mr-2" />
                 Nova Avaliação Capilar
@@ -155,7 +209,7 @@ const Dashboard = () => {
               <Button
                 variant="outline"
                 className="w-full justify-start"
-                disabled
+                onClick={() => navigate("/avaliacoes")}
               >
                 <FileText className="h-4 w-4 mr-2" />
                 Histórico de Avaliações
@@ -167,12 +221,37 @@ const Dashboard = () => {
             <h3 className="font-heading font-semibold text-lg mb-4">
               Últimas Atividades
             </h3>
-            <div className="text-center py-8 text-muted-foreground">
-              <p>Nenhuma atividade recente</p>
-              <p className="text-sm mt-2">
-                Comece criando sua primeira avaliação capilar
-              </p>
-            </div>
+            {recentAvaliacoes.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>Nenhuma atividade recente</p>
+                <p className="text-sm mt-2">
+                  Comece criando sua primeira avaliação capilar
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {recentAvaliacoes.map((avaliacao) => (
+                  <div
+                    key={avaliacao.id}
+                    className="flex items-center justify-between p-3 rounded-lg bg-accent/5 hover:bg-accent/10 transition-colors"
+                  >
+                    <div>
+                      <p className="font-medium">{avaliacao.cliente?.nome}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(avaliacao.created_at).toLocaleDateString("pt-BR")}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => navigate("/avaliacoes")}
+                    >
+                      Ver
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </Card>
         </div>
       </main>

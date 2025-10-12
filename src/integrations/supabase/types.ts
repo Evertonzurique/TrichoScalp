@@ -14,6 +14,68 @@ export type Database = {
   }
   public: {
     Tables: {
+      avaliacoes: {
+        Row: {
+          cliente_id: string
+          created_at: string
+          dados_clinicos: Json | null
+          exame_fisico: Json | null
+          habitos: Json | null
+          historico_familiar: Json | null
+          historico_saude: Json | null
+          id: string
+          informacoes: Json | null
+          queixa_principal: Json | null
+          status: string
+          tratamentos_anteriores: Json | null
+          tricoscopia: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cliente_id: string
+          created_at?: string
+          dados_clinicos?: Json | null
+          exame_fisico?: Json | null
+          habitos?: Json | null
+          historico_familiar?: Json | null
+          historico_saude?: Json | null
+          id?: string
+          informacoes?: Json | null
+          queixa_principal?: Json | null
+          status?: string
+          tratamentos_anteriores?: Json | null
+          tricoscopia?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cliente_id?: string
+          created_at?: string
+          dados_clinicos?: Json | null
+          exame_fisico?: Json | null
+          habitos?: Json | null
+          historico_familiar?: Json | null
+          historico_saude?: Json | null
+          id?: string
+          informacoes?: Json | null
+          queixa_principal?: Json | null
+          status?: string
+          tratamentos_anteriores?: Json | null
+          tricoscopia?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avaliacoes_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clientes: {
         Row: {
           cep: string | null

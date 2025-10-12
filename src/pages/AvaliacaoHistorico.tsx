@@ -1,0 +1,169 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ArrowLeft, Search, FileText } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import AvaliacaoCard from "@/components/avaliacoes/AvaliacaoCard";
+import AvaliacaoDetalhes from "@/components/avaliacoes/AvaliacaoDetalhes";
+
+const AvaliacaoHistorico = () => {
+  const [avaliacoes, setAvaliacoes] = useState<any[]>([]);
+  const [filteredAvaliacoes, setFilteredAvaliacoes] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [selectedAvaliacao, setSelectedAvaliacao] = useState<any>(null);
+  const [detalhesOpen, setDetalhesOpen] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchAvaliacoes();
+  }, []);
+
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setFilteredAvaliacoes(avaliacoes);
+    } else {
+      const filtered = avaliacoes.filter((avaliacao) =>
+        avaliacao.cliente.nome.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredAvaliacoes(filtered);
+    }
+  }, [searchTerm, avaliacoes]);
+
+  const fetchAvaliacoes = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("avaliacoes")
+        .select(`
+          *,
+          cliente:clientes(nome)
+        `)
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setAvaliacoes(data || []);
+      setFilteredAvaliacoes(data || []);
+    } catch (error) {
+      console.error("Error fetching avaliacoes:", error);
+      toast({
+        title: "Erro ao carregar avaliações",
+        description: "Não foi possível carregar o histórico de avaliações.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleViewAvaliacao = (avaliacaoId: string) => {
+    const avaliacao = avaliacoes.find((a) => a.id === avaliacaoId);
+    setSelectedAvaliacao(avaliacao);
+    setDetalhesOpen(true);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen gradient-card flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Carregando avaliações...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen gradient-card">
+      <header className="bg-card/80 backdrop-blur-sm border-b">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate("/dashboard")}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Voltar
+            </Button>
+            <div className="flex-1">
+              <h1 className="text-xl font-heading font-bold">
+                Histórico de Avaliações
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Visualize todas as avaliações capilares realizadas
+              </p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="mb-6">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por nome do cliente..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
+
+          {filteredAvaliacoes.length === 0 ? (
+            <div className="text-center py-12">
+              <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+              <h3 className="text-lg font-semibold mb-2">
+                {searchTerm
+                  ? "Nenhuma avaliação encontrada"
+                  : "Nenhuma avaliação realizada"}
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                {searchTerm
+                  ? "Tente buscar com outros termos."
+                  : "Comece criando sua primeira avaliação capilar."}
+              </p>
+              {!searchTerm && (
+                <Button
+                  onClick={() => navigate("/anamnese/selecionar-cliente")}
+                  className="gradient-primary"
+                >
+                  Nova Avaliação
+                </Button>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredAvaliacoes.map((avaliacao) => (
+                <AvaliacaoCard
+                  key={avaliacao.id}
+                  avaliacao={avaliacao}
+                  onView={handleViewAvaliacao}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <AvaliacaoDetalhes
+        avaliacao={selectedAvaliacao}
+        open={detalhesOpen}
+        onOpenChange={setDetalhesOpen}
+      />
+    </div>
+  );
+};
+
+export default AvaliacaoHistorico;

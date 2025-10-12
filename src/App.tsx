@@ -9,6 +9,8 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Anamnese from "./pages/Anamnese";
 import Clientes from "./pages/Clientes";
+import SelecionarCliente from "./pages/SelecionarCliente";
+import AvaliacaoHistorico from "./pages/AvaliacaoHistorico";
 
 const queryClient = new QueryClient();
 
@@ -22,7 +24,9 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/anamnese" element={<Anamnese />} />
+          <Route path="/anamnese/selecionar-cliente" element={<SelecionarCliente />} />
+          <Route path="/anamnese/:clienteId" element={<Anamnese />} />
+          <Route path="/avaliacoes" element={<AvaliacaoHistorico />} />
           <Route path="/clientes" element={<Clientes />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

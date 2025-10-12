@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Plus, Search, User, Edit, Trash2, Phone, Mail } from "lucide-react";
+import { ArrowLeft, Plus, Search, User, Edit, Trash2, Phone, Mail, FileText } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import type { User as AuthUser } from "@supabase/supabase-js";
 import { ClienteDialog, type ClienteFormData } from "@/components/clientes/ClienteDialog";
@@ -311,13 +311,20 @@ const Clientes = () => {
                 )}
                 <div className="flex gap-2">
                   <Button
+                    variant="default"
+                    size="sm"
+                    className="flex-1 gradient-primary"
+                    onClick={() => navigate(`/anamnese/${cliente.id}`)}
+                  >
+                    <FileText className="h-3 w-3 mr-1" />
+                    Nova Avaliação
+                  </Button>
+                  <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1"
                     onClick={() => openEditDialog(cliente)}
                   >
-                    <Edit className="h-3 w-3 mr-1" />
-                    Editar
+                    <Edit className="h-3 w-3" />
                   </Button>
                   <Button
                     variant="outline"

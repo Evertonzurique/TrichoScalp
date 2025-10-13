@@ -1,7 +1,5 @@
-import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import { Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -10,97 +8,161 @@ interface TricoscopiaProps {
   updateData: (data: any) => void;
 }
 
+interface AvaliacaoPadraoImages {
+  frontalEsquerda?: string;
+  meioFrontal?: string;
+  frontalDireita?: string;
+  meioEsquerda?: string;
+  meio?: string;
+  meioDireita?: string;
+  posteriorEsquerda?: string;
+  posteriorMeio?: string;
+  posteriorDireita?: string;
+}
+
+interface AvaliacaoEspecificaImages {
+  frontalEsquerda?: string;
+  frontalMeio?: string;
+  frontalDireita?: string;
+  meioTopo?: string;
+  posteriorSuperior?: string;
+}
+
 const Tricoscopia = ({ data, updateData }: TricoscopiaProps) => {
-  const [images, setImages] = useState<string[]>(data.images || []);
   const { toast } = useToast();
+
+  const avaliacaoPadraoLabels = [
+    { key: "frontalEsquerda", label: "Frontal Esquerda" },
+    { key: "meioFrontal", label: "Meio Frontal" },
+    { key: "frontalDireita", label: "Frontal Direita" },
+    { key: "meioEsquerda", label: "Meio Esquerda" },
+    { key: "meio", label: "Meio" },
+    { key: "meioDireita", label: "Meio Direita" },
+    { key: "posteriorEsquerda", label: "Posterior Esquerda" },
+    { key: "posteriorMeio", label: "Posterior Meio" },
+    { key: "posteriorDireita", label: "Posterior Direita" },
+  ];
+
+  const avaliacaoEspecificaLabels = [
+    { key: "frontalEsquerda", label: "Frontal Esquerda" },
+    { key: "frontalMeio", label: "Frontal Meio" },
+    { key: "frontalDireita", label: "Frontal Direita" },
+    { key: "meioTopo", label: "Meio Topo" },
+    { key: "posteriorSuperior", label: "Posterior Superior" },
+  ];
 
   const handleChange = (field: string, value: string) => {
     updateData({ ...data, [field]: value });
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
+  const handleImageUpload = (
+    section: "avaliacaoPadrao" | "avaliacaoEspecifica",
+    imageKey: string,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    if (images.length + files.length > 14) {
-      toast({
-        title: "Limite excedido",
-        description: "Você pode fazer upload de no máximo 14 imagens.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const newImages: string[] = [];
-    Array.from(files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        newImages.push(reader.result as string);
-        if (newImages.length === files.length) {
-          const updatedImages = [...images, ...newImages];
-          setImages(updatedImages);
-          updateData({ ...data, images: updatedImages });
-        }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const updatedSection = {
+        ...(data[section] || {}),
+        [imageKey]: reader.result as string,
       };
-      reader.readAsDataURL(file);
-    });
+      updateData({ ...data, [section]: updatedSection });
+    };
+    reader.readAsDataURL(file);
   };
 
-  const removeImage = (index: number) => {
-    const updatedImages = images.filter((_, i) => i !== index);
-    setImages(updatedImages);
-    updateData({ ...data, images: updatedImages });
+  const removeImage = (
+    section: "avaliacaoPadrao" | "avaliacaoEspecifica",
+    imageKey: string
+  ) => {
+    const updatedSection = { ...(data[section] || {}) };
+    delete updatedSection[imageKey];
+    updateData({ ...data, [section]: updatedSection });
+  };
+
+  const renderImageUpload = (
+    section: "avaliacaoPadrao" | "avaliacaoEspecifica",
+    imageKey: string,
+    label: string
+  ) => {
+    const image = data[section]?.[imageKey];
+
+    return (
+      <div className="space-y-2">
+        <Label className="text-sm font-medium">{label}</Label>
+        {image ? (
+          <div className="relative group">
+            <img
+              src={image}
+              alt={label}
+              className="w-full h-32 object-cover rounded-lg border"
+            />
+            <button
+              onClick={() => removeImage(section, imageKey)}
+              className="absolute top-2 right-2 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        ) : (
+          <label className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-muted-foreground/25 rounded-lg cursor-pointer hover:border-accent transition-smooth">
+            <Upload className="h-6 w-6 text-muted-foreground mb-1" />
+            <span className="text-xs text-muted-foreground text-center px-2">
+              {label}
+            </span>
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => handleImageUpload(section, imageKey, e)}
+            />
+          </label>
+        )}
+      </div>
+    );
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-heading font-bold mb-2">Tricoscopia</h2>
+        <h2 className="text-2xl font-heading font-bold mb-2">
+          Tricoscopia - Fotodocumentação Completa
+        </h2>
         <p className="text-muted-foreground">
-          Análise tricoscópica com upload de imagens (9-14 fotos)
+          Upload de imagens para avaliação padrão (9 imagens) e específica (5 imagens)
         </p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-8">
+        {/* Avaliação Padrão 3x3 */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <Label>Imagens da Tricoscopia</Label>
-            <span className="text-sm text-muted-foreground">
-              {images.length} / 14 imagens
-            </span>
+          <div className="border-b pb-2">
+            <h3 className="text-lg font-semibold">Avaliação Padrão 3x3</h3>
+            <p className="text-sm text-muted-foreground">
+              9 imagens organizadas em grade
+            </p>
           </div>
+          <div className="grid grid-cols-3 gap-4">
+            {avaliacaoPadraoLabels.map(({ key, label }) =>
+              renderImageUpload("avaliacaoPadrao", key, label)
+            )}
+          </div>
+        </div>
 
+        {/* Avaliação Específica */}
+        <div className="space-y-4">
+          <div className="border-b pb-2">
+            <h3 className="text-lg font-semibold">Avaliação Específica</h3>
+            <p className="text-sm text-muted-foreground">
+              5 imagens adicionais para análise detalhada
+            </p>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {images.map((image, index) => (
-              <div key={index} className="relative group">
-                <img
-                  src={image}
-                  alt={`Tricoscopia ${index + 1}`}
-                  className="w-full h-32 object-cover rounded-lg border"
-                />
-                <button
-                  onClick={() => removeImage(index)}
-                  className="absolute top-2 right-2 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
-
-            {images.length < 14 && (
-              <label className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-muted-foreground/25 rounded-lg cursor-pointer hover:border-accent transition-smooth">
-                <Upload className="h-8 w-8 text-muted-foreground mb-2" />
-                <span className="text-sm text-muted-foreground">
-                  Adicionar foto
-                </span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={handleImageUpload}
-                />
-              </label>
+            {avaliacaoEspecificaLabels.map(({ key, label }) =>
+              renderImageUpload("avaliacaoEspecifica", key, label)
             )}
           </div>
         </div>

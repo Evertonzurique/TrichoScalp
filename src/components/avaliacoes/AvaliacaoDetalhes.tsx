@@ -1,7 +1,9 @@
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useState } from "react";
-import { X } from "lucide-react";
+import { X, Download } from "lucide-react";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 
 interface AvaliacaoDetalhesProps {
   avaliacao: any;
@@ -26,6 +29,57 @@ const AvaliacaoDetalhes = ({
     src: string;
     label: string;
   } | null>(null);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+
+  const handleDownloadPdf = async () => {
+    if (!avaliacao) return;
+    
+    setIsGeneratingPdf(true);
+    try {
+      const element = document.getElementById("avaliacao-content");
+      if (!element) return;
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+      const imgX = (pdfWidth - imgWidth * ratio) / 2;
+      const imgY = 10;
+
+      pdf.addImage(
+        imgData,
+        "PNG",
+        imgX,
+        imgY,
+        imgWidth * ratio,
+        imgHeight * ratio
+      );
+
+      const fileName = `Avaliacao_${avaliacao.cliente?.nome}_${format(
+        new Date(avaliacao.created_at),
+        "dd-MM-yyyy"
+      )}.pdf`;
+      pdf.save(fileName);
+    } catch (error) {
+      console.error("Erro ao gerar PDF:", error);
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
 
   if (!avaliacao) return null;
 
@@ -176,17 +230,30 @@ const AvaliacaoDetalhes = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-3xl max-h-[80vh]">
           <DialogHeader>
-            <DialogTitle>Detalhes da Avaliação</DialogTitle>
-            <p className="text-sm text-muted-foreground">
-              Cliente: {avaliacao.cliente?.nome} •{" "}
-              {format(new Date(avaliacao.created_at), "dd/MM/yyyy", {
-                locale: ptBR,
-              })}
-            </p>
+            <div className="flex items-start justify-between">
+              <div>
+                <DialogTitle>Detalhes da Avaliação</DialogTitle>
+                <p className="text-sm text-muted-foreground">
+                  Cliente: {avaliacao.cliente?.nome} •{" "}
+                  {format(new Date(avaliacao.created_at), "dd/MM/yyyy", {
+                    locale: ptBR,
+                  })}
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDownloadPdf}
+                disabled={isGeneratingPdf}
+              >
+                <Download className="h-4 w-4 mr-2" />
+                {isGeneratingPdf ? "Gerando..." : "Baixar PDF"}
+              </Button>
+            </div>
           </DialogHeader>
 
           <ScrollArea className="h-[60vh] pr-4">
-            <div className="space-y-4">
+            <div id="avaliacao-content" className="space-y-4 bg-background p-4">
               {renderSection("Queixa Principal", avaliacao.queixa_principal)}
               <Separator />
               {renderSection("Dados Clínicos", avaliacao.dados_clinicos)}

@@ -78,7 +78,6 @@ export type Database = {
       }
       clientes: {
         Row: {
-          cep: string | null
           cidade: string | null
           cpf: string | null
           created_at: string
@@ -87,6 +86,7 @@ export type Database = {
           endereco: string | null
           estado: string | null
           id: string
+          instagram: string | null
           nome: string
           observacoes: string | null
           telefone: string
@@ -94,7 +94,6 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          cep?: string | null
           cidade?: string | null
           cpf?: string | null
           created_at?: string
@@ -103,6 +102,7 @@ export type Database = {
           endereco?: string | null
           estado?: string | null
           id?: string
+          instagram?: string | null
           nome: string
           observacoes?: string | null
           telefone: string
@@ -110,7 +110,6 @@ export type Database = {
           user_id: string
         }
         Update: {
-          cep?: string | null
           cidade?: string | null
           cpf?: string | null
           created_at?: string
@@ -119,6 +118,7 @@ export type Database = {
           endereco?: string | null
           estado?: string | null
           id?: string
+          instagram?: string | null
           nome?: string
           observacoes?: string | null
           telefone?: string

@@ -29,7 +29,7 @@ interface Cliente {
   endereco: string | null;
   cidade: string | null;
   estado: string | null;
-  cep: string | null;
+  instagram: string | null;
   observacoes: string | null;
   created_at: string;
 }
@@ -94,7 +94,7 @@ const Clientes = () => {
       endereco: data.endereco || null,
       cidade: data.cidade || null,
       estado: data.estado || null,
-      cep: data.cep || null,
+      instagram: data.instagram || null,
       observacoes: data.observacoes || null,
     });
 
@@ -130,7 +130,7 @@ const Clientes = () => {
         endereco: data.endereco || null,
         cidade: data.cidade || null,
         estado: data.estado || null,
-        cep: data.cep || null,
+        instagram: data.instagram || null,
         observacoes: data.observacoes || null,
       })
       .eq("id", editingCliente.id);
@@ -355,7 +355,7 @@ const Clientes = () => {
             endereco: editingCliente.endereco || "",
             cidade: editingCliente.cidade || "",
             estado: editingCliente.estado || "",
-            cep: editingCliente.cep || "",
+            instagram: editingCliente.instagram || "",
             observacoes: editingCliente.observacoes || "",
           } : undefined}
           isEditing={!!editingCliente}

@@ -28,7 +28,7 @@ const clienteSchema = z.object({
   endereco: z.string().trim().max(200, "Endereço deve ter no máximo 200 caracteres").optional().or(z.literal("")),
   cidade: z.string().trim().max(100, "Cidade deve ter no máximo 100 caracteres").optional().or(z.literal("")),
   estado: z.string().trim().max(2, "Estado deve ter 2 caracteres").optional().or(z.literal("")),
-  cep: z.string().trim().max(9, "CEP deve ter no máximo 9 caracteres").optional().or(z.literal("")),
+  instagram: z.string().trim().max(50, "Instagram deve ter no máximo 50 caracteres").optional().or(z.literal("")),
   observacoes: z.string().trim().max(1000, "Observações devem ter no máximo 1000 caracteres").optional().or(z.literal("")),
 });
 
@@ -60,7 +60,7 @@ export const ClienteDialog = ({
       endereco: "",
       cidade: "",
       estado: "",
-      cep: "",
+      instagram: "",
       observacoes: "",
     },
   });
@@ -195,12 +195,12 @@ export const ClienteDialog = ({
               />
               <FormField
                 control={form.control}
-                name="cep"
+                name="instagram"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>CEP</FormLabel>
+                    <FormLabel>Instagram</FormLabel>
                     <FormControl>
-                      <Input placeholder="00000-000" {...field} />
+                      <Input placeholder="@usuario" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

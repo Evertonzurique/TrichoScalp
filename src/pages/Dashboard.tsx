@@ -122,7 +122,7 @@ const Dashboard = () => {
               <img
                 src="/brand/logo-com-texto.png"
                 alt="TrichoScalp Logo"
-                className="h-12 w-auto"
+                className="h-16 w-auto"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                 }}
@@ -199,26 +199,26 @@ const Dashboard = () => {
             </h3>
             <div className="space-y-3">
               <Button
-                className="w-full justify-start bg-accent hover:bg-accent/90 text-white"
+                className="w-full justify-start bg-accent hover:bg-accent/90 text-white text-base py-6"
                 onClick={() => navigate("/anamnese/selecionar-cliente")}
               >
-                <PlusCircle className="h-4 w-4 mr-2" />
+                <PlusCircle className="h-5 w-5 mr-3" />
                 Nova Avaliação Capilar
               </Button>
               <Button
                 variant="outline"
-                className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20"
+                className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20 text-base py-6"
                 onClick={() => navigate("/clientes")}
               >
-                <Users className="h-4 w-4 mr-2" />
+                <Users className="h-5 w-5 mr-3" />
                 Gerenciar Clientes
               </Button>
               <Button
                 variant="outline"
-                className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20"
+                className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20 text-base py-6"
                 onClick={() => navigate("/avaliacoes")}
               >
-                <FileText className="h-4 w-4 mr-2" />
+                <FileText className="h-5 w-5 mr-3" />
                 Histórico de Avaliações
               </Button>
             </div>

@@ -65,16 +65,13 @@ const Index = () => {
               <img
                 src="/brand/logo-com-texto.png"
                 alt="Logo Anamnese Capilar"
-                className="h-20 w-auto mb-4"
+                className="h-24 w-auto mb-4"
                 loading="eager"
                 onError={(e) => {
                   console.log('Erro ao carregar logo:', e);
                   e.currentTarget.style.display = 'none';
                 }}
               />
-              <h1 className="text-5xl md:text-6xl font-heading font-bold text-white">
-                TrichoScalp
-              </h1>
             </div>
             <p className="text-xl md:text-2xl mb-4 text-white/90">
               Plataforma profissional para especialistas capilares

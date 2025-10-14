@@ -97,14 +97,11 @@ const Auth = () => {
               <img
                 src="/brand/logo-com-texto.png"
                 alt="TrichoScalp Logo"
-                className="h-16 w-auto mb-2"
+                className="h-20 w-auto mb-2"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                 }}
               />
-              <h1 className="text-3xl font-heading font-bold text-white">
-                TrichoScalp
-              </h1>
             </div>
             <p className="text-white/80">
               {isLogin ? "Entre na sua conta" : "Crie sua conta"}
@@ -170,7 +167,7 @@ const Auth = () => {
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
+              <span className="w-full border-t border-white/20" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-white/10 px-2 text-white/80">

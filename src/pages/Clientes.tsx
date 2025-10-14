@@ -324,15 +324,19 @@ const Clientes = () => {
                     variant="outline"
                     size="sm"
                     onClick={() => openEditDialog(cliente)}
+                    className="bg-white/10 border-white/20 text-white hover:bg-white/20"
                   >
-                    <Edit className="h-3 w-3" />
+                    <Edit className="h-3 w-3 mr-1" />
+                    Editar
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => openDeleteDialog(cliente.id)}
+                    className="bg-white/10 border-white/20 text-white hover:bg-white/20"
                   >
-                    <Trash2 className="h-3 w-3" />
+                    <Trash2 className="h-3 w-3 mr-1" />
+                    Excluir
                   </Button>
                 </div>
               </div>

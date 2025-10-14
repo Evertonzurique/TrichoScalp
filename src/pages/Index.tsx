@@ -67,9 +67,13 @@ const Index = () => {
                 alt="Logo Anamnese Capilar"
                 className="h-20 w-auto mb-4"
                 loading="eager"
+                onError={(e) => {
+                  console.log('Erro ao carregar logo:', e);
+                  e.currentTarget.style.display = 'none';
+                }}
               />
               <h1 className="text-5xl md:text-6xl font-heading font-bold text-white">
-                Anamnese Capilar
+                TrichoScalp
               </h1>
             </div>
             <p className="text-xl md:text-2xl mb-4 text-white/90">
@@ -193,7 +197,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center text-muted-foreground">
             <p className="text-sm">
-              © 2025 Anamnese Capilar. Todos os direitos reservados.
+              © 2025 TrichoScalp. Todos os direitos reservados.
             </p>
           </div>
         </div>

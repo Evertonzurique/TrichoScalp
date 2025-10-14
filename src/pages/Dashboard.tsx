@@ -114,18 +114,25 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card shadow-sm">
+    <div className="min-h-screen dashboard-background">
+      <header className="border-b bg-black/40 backdrop-blur-sm shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-heading font-bold text-gradient">
-              TricoPro
-            </h1>
+            <div className="flex items-center gap-3">
+              <img
+                src="/brand/logo-com-texto.png"
+                alt="TrichoScalp Logo"
+                className="h-12 w-auto"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+            </div>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-white/90">
                 {user?.email}
               </span>
-              <Button variant="outline" size="sm" onClick={handleLogout}>
+              <Button variant="outline" size="sm" onClick={handleLogout} className="bg-white/10 border-white/20 text-white hover:bg-white/20">
                 <LogOut className="h-4 w-4 mr-2" />
                 Sair
               </Button>
@@ -136,63 +143,63 @@ const Dashboard = () => {
 
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-heading font-bold mb-2">
-            Bem-vindo ao TricoPro
+          <h2 className="text-3xl font-heading font-bold mb-2 text-white">
+            Bem-vindo ao TrichoScalp
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-white/90">
             Gerencie seus clientes e avaliações capilares de forma profissional
           </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-          <Card className="p-6 shadow-card hover:shadow-elevated transition-smooth cursor-pointer">
+          <div className="card-brand cursor-pointer">
             <div className="flex items-start justify-between mb-4">
-              <div className="p-3 rounded-lg bg-accent/10">
+              <div className="p-3 rounded-lg bg-accent/20">
                 <Users className="h-6 w-6 text-accent" />
               </div>
-              <span className="text-2xl font-bold">{clientesCount}</span>
+              <span className="stat-number">{clientesCount}</span>
             </div>
-            <h3 className="font-heading font-semibold mb-1">Clientes</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3>Clientes</h3>
+            <p>
               Total de clientes cadastrados
             </p>
-          </Card>
+          </div>
 
-          <Card className="p-6 shadow-card hover:shadow-elevated transition-smooth cursor-pointer">
+          <div className="card-brand cursor-pointer">
             <div className="flex items-start justify-between mb-4">
-              <div className="p-3 rounded-lg bg-purple/10">
+              <div className="p-3 rounded-lg bg-purple/20">
                 <FileText className="h-6 w-6 text-purple" />
               </div>
-              <span className="text-2xl font-bold">{avaliacoesCount}</span>
+              <span className="stat-number">{avaliacoesCount}</span>
             </div>
-            <h3 className="font-heading font-semibold mb-1">Avaliações</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3>Avaliações</h3>
+            <p>
               Avaliações capilares realizadas
             </p>
-          </Card>
+          </div>
 
-          <Card className="p-6 shadow-card hover:shadow-elevated transition-smooth cursor-pointer">
+          <div className="card-brand cursor-pointer">
             <div className="flex items-start justify-between mb-4">
-              <div className="p-3 rounded-lg bg-secondary/10">
+              <div className="p-3 rounded-lg bg-secondary/20">
                 <FileText className="h-6 w-6 text-secondary" />
               </div>
-              <span className="text-2xl font-bold">{avaliacoesThisMonth}</span>
+              <span className="stat-number">{avaliacoesThisMonth}</span>
             </div>
-            <h3 className="font-heading font-semibold mb-1">Este mês</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3>Este mês</h3>
+            <p>
               Atendimentos no mês atual
             </p>
-          </Card>
+          </div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          <Card className="p-6 shadow-card">
-            <h3 className="font-heading font-semibold text-lg mb-4">
+          <div className="card-brand">
+            <h3 className="mb-4">
               Ações Rápidas
             </h3>
             <div className="space-y-3">
               <Button
-                className="w-full justify-start gradient-primary"
+                className="w-full justify-start bg-accent hover:bg-accent/90 text-white"
                 onClick={() => navigate("/anamnese/selecionar-cliente")}
               >
                 <PlusCircle className="h-4 w-4 mr-2" />
@@ -200,7 +207,7 @@ const Dashboard = () => {
               </Button>
               <Button
                 variant="outline"
-                className="w-full justify-start"
+                className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20"
                 onClick={() => navigate("/clientes")}
               >
                 <Users className="h-4 w-4 mr-2" />
@@ -208,23 +215,23 @@ const Dashboard = () => {
               </Button>
               <Button
                 variant="outline"
-                className="w-full justify-start"
+                className="w-full justify-start bg-white/10 border-white/20 text-white hover:bg-white/20"
                 onClick={() => navigate("/avaliacoes")}
               >
                 <FileText className="h-4 w-4 mr-2" />
                 Histórico de Avaliações
               </Button>
             </div>
-          </Card>
+          </div>
 
-          <Card className="p-6 shadow-card">
-            <h3 className="font-heading font-semibold text-lg mb-4">
+          <div className="card-brand">
+            <h3 className="mb-4">
               Últimas Atividades
             </h3>
             {recentAvaliacoes.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <p>Nenhuma atividade recente</p>
-                <p className="text-sm mt-2">
+              <div className="text-center py-8">
+                <p className="text-white/80">Nenhuma atividade recente</p>
+                <p className="text-sm mt-2 text-white/60">
                   Comece criando sua primeira avaliação capilar
                 </p>
               </div>
@@ -233,11 +240,11 @@ const Dashboard = () => {
                 {recentAvaliacoes.map((avaliacao) => (
                   <div
                     key={avaliacao.id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-accent/5 hover:bg-accent/10 transition-colors"
+                    className="flex items-center justify-between p-3 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
                   >
                     <div>
-                      <p className="font-medium">{avaliacao.cliente?.nome}</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="font-medium text-white">{avaliacao.cliente?.nome}</p>
+                      <p className="text-sm text-white/70">
                         {new Date(avaliacao.created_at).toLocaleDateString("pt-BR")}
                       </p>
                     </div>
@@ -252,7 +259,7 @@ const Dashboard = () => {
                 ))}
               </div>
             )}
-          </Card>
+          </div>
         </div>
       </main>
     </div>

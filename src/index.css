@@ -129,4 +129,48 @@ All colors MUST be HSL.
   .transition-smooth {
     transition: var(--transition-smooth);
   }
+  
+  .dashboard-background {
+    background-image: url('/brand/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
+  /* Cards estilo projeto fonte */
+  .card-brand {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    color: white;
+    transition: all 0.3s ease;
+  }
+  
+  .card-brand:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  }
+  
+  .card-brand h3 {
+    color: hsl(var(--accent));
+    font-size: 1.2rem;
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+  
+  .card-brand p {
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+  }
+  
+  .card-brand .stat-number {
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+  }
 }

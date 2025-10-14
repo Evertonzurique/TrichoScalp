@@ -83,23 +83,24 @@ const AvaliacaoHistorico = () => {
   }
 
   return (
-    <div className="min-h-screen gradient-card">
-      <header className="bg-card/80 backdrop-blur-sm border-b">
+    <div className="min-h-screen dashboard-background">
+      <header className="bg-black/40 backdrop-blur-sm border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate("/dashboard")}
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Voltar
             </Button>
             <div className="flex-1">
-              <h1 className="text-xl font-heading font-bold">
+              <h1 className="text-xl font-heading font-bold text-white">
                 Histórico de Avaliações
               </h1>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-white/80">
                 Visualize todas as avaliações capilares realizadas
               </p>
             </div>

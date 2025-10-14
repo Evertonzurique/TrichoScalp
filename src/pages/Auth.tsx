@@ -32,7 +32,7 @@ const Auth = () => {
         if (data.user) {
           toast({
             title: "Login realizado!",
-            description: "Bem-vindo de volta ao TricoPro.",
+            description: "Bem-vindo de volta ao TrichoScalp.",
           });
           navigate("/dashboard");
         }
@@ -53,7 +53,7 @@ const Auth = () => {
         if (data.user) {
           toast({
             title: "Conta criada!",
-            description: "Bem-vindo ao TricoPro. Você já pode começar a usar o sistema.",
+            description: "Bem-vindo ao TrichoScalp. Você já pode começar a usar o sistema.",
           });
           navigate("/dashboard");
         }
@@ -89,14 +89,24 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen gradient-card flex items-center justify-center p-4">
+    <div className="min-h-screen dashboard-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-card rounded-2xl shadow-elevated p-8 space-y-6">
-          <div className="text-center space-y-2">
-            <h1 className="text-3xl font-heading font-bold text-gradient">
-              TricoPro
-            </h1>
-            <p className="text-muted-foreground">
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl shadow-elevated p-8 space-y-6">
+          <div className="text-center space-y-4">
+            <div className="flex flex-col items-center">
+              <img
+                src="/brand/logo-com-texto.png"
+                alt="TrichoScalp Logo"
+                className="h-16 w-auto mb-2"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+              <h1 className="text-3xl font-heading font-bold text-white">
+                TrichoScalp
+              </h1>
+            </div>
+            <p className="text-white/80">
               {isLogin ? "Entre na sua conta" : "Crie sua conta"}
             </p>
           </div>
@@ -153,7 +163,7 @@ const Auth = () => {
               </div>
             </div>
 
-            <Button type="submit" className="w-full gradient-primary" disabled={loading}>
+            <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-white" disabled={loading}>
               {loading ? "Carregando..." : isLogin ? "Entrar" : "Criar conta"}
             </Button>
           </form>
@@ -163,7 +173,7 @@ const Auth = () => {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">
+              <span className="bg-white/10 px-2 text-white/80">
                 Ou continue com
               </span>
             </div>
@@ -172,7 +182,7 @@ const Auth = () => {
           <Button
             type="button"
             variant="outline"
-            className="w-full"
+            className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20"
             onClick={handleGoogleAuth}
           >
             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">

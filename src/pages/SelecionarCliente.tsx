@@ -121,23 +121,24 @@ const SelecionarCliente = () => {
   }
 
   return (
-    <div className="min-h-screen gradient-card">
-      <header className="bg-card/80 backdrop-blur-sm border-b">
+    <div className="min-h-screen dashboard-background">
+      <header className="bg-black/40 backdrop-blur-sm border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate("/dashboard")}
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Voltar
             </Button>
             <div className="flex-1">
-              <h1 className="text-xl font-heading font-bold">
+              <h1 className="text-xl font-heading font-bold text-white">
                 Selecionar Cliente
               </h1>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-white/80">
                 Escolha um cliente existente ou cadastre um novo para iniciar a avaliação
               </p>
             </div>
@@ -164,47 +165,47 @@ const SelecionarCliente = () => {
           </div>
 
           {filteredClientes.length === 0 ? (
-            <Card className="p-12 text-center">
-              <User className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-lg font-semibold mb-2">
+            <div className="card-brand text-center">
+              <User className="h-12 w-12 mx-auto mb-4 text-accent" />
+              <h3 className="mb-2">
                 {searchTerm ? "Nenhum cliente encontrado" : "Nenhum cliente cadastrado"}
               </h3>
-              <p className="text-muted-foreground mb-4">
+              <p className="mb-4">
                 {searchTerm
                   ? "Tente buscar com outros termos ou cadastre um novo cliente."
                   : "Comece cadastrando seu primeiro cliente para realizar avaliações."}
               </p>
-              <Button onClick={() => setDialogOpen(true)} className="gradient-primary">
+              <Button onClick={() => setDialogOpen(true)} className="bg-accent hover:bg-accent/90 text-white">
                 <Plus className="h-4 w-4 mr-2" />
                 Cadastrar Cliente
               </Button>
-            </Card>
+            </div>
           ) : (
             <div className="grid gap-4">
               {filteredClientes.map((cliente) => (
-                <Card
+                <div
                   key={cliente.id}
-                  className="p-6 hover:shadow-lg transition-shadow cursor-pointer"
+                  className="card-brand cursor-pointer"
                   onClick={() => handleSelectCliente(cliente.id)}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                        <User className="h-6 w-6 text-primary" />
+                      <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center">
+                        <User className="h-6 w-6 text-accent" />
                       </div>
                       <div>
                         <h3 className="font-semibold text-lg">{cliente.nome}</h3>
-                        <div className="flex gap-4 text-sm text-muted-foreground">
+                        <div className="flex gap-4 text-sm">
                           <span>{cliente.telefone}</span>
                           {cliente.email && <span>{cliente.email}</span>}
                         </div>
                       </div>
                     </div>
-                    <Button variant="outline">
+                    <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
                       Selecionar
                     </Button>
                   </div>
-                </Card>
+                </div>
               ))}
             </div>
           )}

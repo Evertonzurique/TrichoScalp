@@ -209,8 +209,8 @@ const Clientes = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card shadow-sm">
+    <div className="min-h-screen dashboard-background">
+      <header className="border-b bg-black/40 backdrop-blur-sm shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -218,11 +218,12 @@ const Clientes = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate("/dashboard")}
+                className="bg-white/10 border-white/20 text-white hover:bg-white/20"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Voltar
               </Button>
-              <h1 className="text-2xl font-heading font-bold text-gradient">
+              <h1 className="text-2xl font-heading font-bold text-white">
                 Gerenciar Clientes
               </h1>
             </div>
@@ -254,22 +255,22 @@ const Clientes = () => {
         </div>
 
         {filteredClientes.length === 0 ? (
-          <Card className="p-6 shadow-card">
+          <div className="card-brand">
             <div className="text-center py-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 mb-4">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/20 mb-4">
                 <User className="h-8 w-8 text-accent" />
               </div>
-              <h3 className="font-heading font-semibold text-lg mb-2">
+              <h3 className="mb-2">
                 {clientes.length === 0 ? "Nenhum cliente cadastrado" : "Nenhum cliente encontrado"}
               </h3>
-              <p className="text-muted-foreground mb-6">
+              <p className="mb-6">
                 {clientes.length === 0 
                   ? "Comece adicionando seu primeiro cliente ao sistema"
                   : "Tente buscar com outro termo"}
               </p>
               {clientes.length === 0 && (
                 <Button 
-                  className="gradient-primary"
+                  className="bg-accent hover:bg-accent/90 text-white"
                   onClick={() => {
                     setEditingCliente(null);
                     setDialogOpen(true);
@@ -280,17 +281,17 @@ const Clientes = () => {
                 </Button>
               )}
             </div>
-          </Card>
+          </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filteredClientes.map((cliente) => (
-              <Card key={cliente.id} className="p-6 shadow-card hover:shadow-elevated transition-smooth">
+              <div key={cliente.id} className="card-brand">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
-                    <h3 className="font-heading font-semibold text-lg mb-1">
+                    <h3 className="text-lg mb-1">
                       {cliente.nome}
                     </h3>
-                    <div className="space-y-1 text-sm text-muted-foreground">
+                    <div className="space-y-1 text-sm">
                       <div className="flex items-center gap-2">
                         <Phone className="h-3 w-3" />
                         {cliente.telefone}
@@ -323,18 +324,22 @@ const Clientes = () => {
                     variant="outline"
                     size="sm"
                     onClick={() => openEditDialog(cliente)}
+                    className="bg-white/10 border-white/20 text-white hover:bg-white/20"
                   >
-                    <Edit className="h-3 w-3" />
+                    <Edit className="h-3 w-3 mr-1" />
+                    Editar
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => openDeleteDialog(cliente.id)}
+                    className="bg-white/10 border-white/20 text-white hover:bg-white/20"
                   >
-                    <Trash2 className="h-3 w-3" />
+                    <Trash2 className="h-3 w-3 mr-1" />
+                    Excluir
                   </Button>
                 </div>
-              </Card>
+              </div>
             ))}
           </div>
         )}

@@ -173,4 +173,203 @@ All colors MUST be HSL.
     font-size: 2rem;
     font-weight: bold;
   }
+  
+  /* --- Escopo específico: Detalhes da Avaliação --- */
+  /* Variáveis e estilos de light/dark para consistência visual local */
+  .avaliacao-detalhes {
+    /* Cores exclusivamente do design system (modo claro) */
+    --avaliacao-primary-color: hsl(var(--primary));
+    --avaliacao-card-bg: hsl(var(--card));
+    --avaliacao-card-border: hsl(var(--border));
+    --avaliacao-text-color: hsl(var(--foreground));
+    --avaliacao-muted-text: hsl(var(--muted-foreground));
+    --avaliacao-hover-shadow: var(--shadow-elevated);
+    /* Tipografia e espaçamento (modo claro) */
+    --avaliacao-size-title: 1rem;         /* 16px */
+    --avaliacao-size-subtitle: 0.9375rem; /* 15px */
+    --avaliacao-size-body: 0.875rem;      /* 14px */
+    --avaliacao-font-title: 600;          /* semibold */
+    --avaliacao-font-subtitle: 500;       /* medium */
+    --avaliacao-font-body: 400;           /* regular */
+    --avaliacao-space-xs: 0.25rem; /* 4px */
+    --avaliacao-space-sm: 0.5rem;  /* 8px */
+    --avaliacao-space-md: 0.75rem; /* 12px */
+    --avaliacao-space-lg: 1rem;    /* 16px */
+    --avaliacao-space-xl: 1.25rem; /* 20px */
+  }
+  
+  .dark .avaliacao-detalhes {
+    --avaliacao-primary-color: #4DA3FF; /* Azul acessível em fundo escuro */
+    --avaliacao-card-bg: rgba(255, 255, 255, 0.06);
+    --avaliacao-card-border: rgba(255, 255, 255, 0.20);
+    --avaliacao-text-color: hsl(var(--foreground));
+    --avaliacao-muted-text: color-mix(in hsl, hsl(var(--foreground)) 80%, transparent);
+    --avaliacao-hover-shadow: 0 8px 25px rgba(0, 0, 0, 0.40);
+  }
+  
+  /* Dialog da seção com variáveis locais e suavidade nas transições */
+  .avaliacao-detalhes .dialog-avaliacao {
+    background: var(--avaliacao-card-bg);
+    color: var(--avaliacao-text-color);
+    border: 1px solid var(--avaliacao-card-border);
+    transition: all 0.3s ease;
+  }
+
+  /* Botão de PDF — legível em ambos os temas */
+  .avaliacao-detalhes { 
+    --avaliacao-pdf-text: hsl(var(--foreground));
+  }
+  .avaliacao-detalhes .btn-pdf {
+    color: var(--avaliacao-pdf-text);
+    background: color-mix(in hsl, var(--avaliacao-card-bg) 92%, white);
+    border: 1px solid var(--avaliacao-card-border);
+    font-size: 14px; /* garantir mínimo 14px */
+    font-weight: 500; /* medium */
+    border-radius: var(--radius);
+    padding: 0.5rem 0.75rem; /* harmoniza com size=sm */
+    transition: all 0.3s ease;
+  }
+  .avaliacao-detalhes .btn-pdf svg {
+    color: currentColor; /* ícone herda a cor do texto */
+  }
+  .avaliacao-detalhes .btn-pdf:hover {
+    background: color-mix(in hsl, var(--avaliacao-card-bg) 86%, white);
+    filter: brightness(1.03);
+  }
+  .avaliacao-detalhes .btn-pdf:focus-visible {
+    outline: 2px solid var(--avaliacao-primary-color);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px color-mix(in hsl, var(--avaliacao-primary-color) 25%, transparent);
+  }
+  .dark .avaliacao-detalhes .btn-pdf {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.20);
+    background: rgba(255, 255, 255, 0.10);
+  }
+  .dark .avaliacao-detalhes .btn-pdf:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+  
+  /* Ajuste de cards dentro da seção para refletir o tema */
+  .avaliacao-detalhes .card-brand {
+    background: var(--avaliacao-card-bg);
+    color: var(--avaliacao-text-color);
+    border-color: var(--avaliacao-card-border);
+    border-radius: var(--radius);
+    padding: var(--avaliacao-space-xl);
+    box-shadow: var(--shadow-card);
+    transition: all 0.3s ease;
+  }
+  .avaliacao-detalhes .card-brand:hover {
+    box-shadow: var(--shadow-elevated);
+    transform: translateY(-2px);
+    /* leve intensificação do fundo em cada tema */
+    background: color-mix(in hsl, var(--avaliacao-card-bg) 92%, white);
+  }
+  .avaliacao-detalhes .card-brand h3 {
+    color: var(--avaliacao-primary-color);
+    font-size: var(--avaliacao-size-title);
+    font-weight: var(--avaliacao-font-title);
+  }
+  .avaliacao-detalhes .card-brand p {
+    color: var(--avaliacao-muted-text);
+    font-size: var(--avaliacao-size-body);
+    font-weight: var(--avaliacao-font-body);
+  }
+  /* Foco acessível dentro do card */
+  .avaliacao-detalhes .card-brand:focus-within {
+    outline: 2px solid hsl(var(--accent));
+    outline-offset: 2px;
+  }
+  /* Elementos interativos dentro do card: estados claros */
+  .avaliacao-detalhes .card-brand a,
+  .avaliacao-detalhes .card-brand button {
+    transition: all 0.3s ease;
+  }
+  .avaliacao-detalhes .card-brand a {
+    color: var(--avaliacao-primary-color);
+    text-decoration: underline;
+    text-decoration-thickness: 0.06em;
+    text-underline-offset: 2px;
+  }
+  .avaliacao-detalhes .card-brand a:hover {
+    filter: brightness(1.05);
+  }
+  .avaliacao-detalhes .card-brand button:hover {
+    filter: brightness(1.05);
+  }
+  .avaliacao-detalhes .card-brand button:active {
+    transform: translateY(1px);
+  }
+  .avaliacao-detalhes .card-brand button:focus-visible {
+    outline: 2px solid hsl(var(--accent));
+    outline-offset: 2px;
+  }
+  
+  /* Inputs da seção (observações) mantendo legibilidade e contraste WCAG AA */
+  .avaliacao-detalhes input,
+  .avaliacao-detalhes textarea {
+    background: hsl(var(--background));
+    border-color: var(--avaliacao-card-border);
+    color: var(--avaliacao-text-color);
+    transition: all 0.3s ease;
+  }
+  .avaliacao-detalhes input::placeholder,
+  .avaliacao-detalhes textarea::placeholder {
+    color: var(--avaliacao-muted-text);
+  }
+  .dark .avaliacao-detalhes input,
+  .dark .avaliacao-detalhes textarea {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.20);
+    color: hsl(var(--foreground));
+  }
+  .dark .avaliacao-detalhes input::placeholder,
+  .dark .avaliacao-detalhes textarea::placeholder {
+    color: color-mix(in hsl, hsl(var(--foreground)) 65%, transparent);
+  }
+  
+  /* Tabs da seção: botões Anamnese, Assessoria, Imagens com fonte azul no modo claro */
+  .avaliacao-detalhes .tabs-avaliacao {
+    transition: all 0.3s ease;
+  }
+  .avaliacao-detalhes .tabs-avaliacao .tab-trigger {
+    color: var(--avaliacao-primary-color);
+    transition: all 0.3s ease;
+  }
+  .avaliacao-detalhes .tabs-avaliacao .tab-trigger[data-state="active"] {
+    background: color-mix(in hsl, hsl(var(--primary)) 16%, hsl(var(--card)));
+  }
+  .dark .avaliacao-detalhes .tabs-avaliacao .tab-trigger[data-state="active"] {
+    background: rgba(77, 163, 255, 0.20);
+  }
+  .avaliacao-detalhes .tabs-avaliacao .tab-trigger:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
+    transform: translateY(-1px);
+  }
+  .dark .avaliacao-detalhes .tabs-avaliacao .tab-trigger:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  }
+  
+  /* Ações do header: mover 1cm para a esquerda, com transição suave */
+  .avaliacao-detalhes .header-actions.shift-left-1cm {
+    transform: translateX(-1cm);
+    transition: all 0.3s ease;
+  }
+  
+  /* Responsividade: ajustes sutis de padding e grid em telas pequenas */
+  @media (max-width: 640px) {
+    .avaliacao-detalhes .card-brand {
+      padding: 16px;
+      border-radius: calc(var(--radius) - 2px);
+    }
+    .avaliacao-detalhes .tabs-avaliacao {
+      gap: 6px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .avaliacao-detalhes .card-brand {
+      padding: 24px;
+    }
+  }
 }

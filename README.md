@@ -1,73 +1,283 @@
-# Welcome to your Lovable project
+# TrichoScalp - Sistema de Gestão para Tricologia
 
-## Project info
+TrichoScalp é um SaaS desenvolvido em React + Supabase, voltado a cabeleireiros, terapeutas capilares e tricologistas. O sistema oferece módulos completos de gestão de clientes, anamnese, tricoscopia e **Assessoria de Anamnese com Inteligência Artificial**.
 
-**URL**: https://lovable.dev/projects/87f27dc3-1bea-4f9e-9589-7dde3d8569c3
+## 🚀 Funcionalidades Principais
 
-## How can I edit this code?
+### Módulos Básicos
+- **Gestão de Clientes**: Cadastro completo com dados pessoais e clínicos
+- **Anamnese Digital**: Formulários estruturados para coleta de informações
+- **Tricoscopia**: Upload e organização de imagens tricoscópicas e panorâmicas
+- **Histórico de Avaliações**: Acompanhamento temporal das avaliações
 
-There are several ways of editing your application.
+### 🧠 Assessoria de Anamnese com IA (NOVO)
+- **Análise Automatizada**: Processamento de imagens tricoscópicas via IA
+- **Relatórios Quantitativos**: Densidade, oleosidade, descamação, miniaturização, inflamação
+- **Relatórios Qualitativos**: Interpretação clínica e recomendações personalizadas
+- **Comparativo Histórico**: Evolução entre avaliações com gráficos temporais
+- **Exportação PDF**: Relatórios profissionais completos com imagens e gráficos
+- **Armazenamento Seguro**: Imagens no Supabase Storage com políticas RLS
 
-**Use Lovable**
+## 🛠️ Stack Tecnológica
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/87f27dc3-1bea-4f9e-9589-7dde3d8569c3) and start prompting.
+### Frontend
+- **React 18** + **Vite** + **TypeScript**
+- **Tailwind CSS** + **shadcn-ui** para interface
+- **React Hook Form** + **Zod** para formulários
+- **Recharts** para gráficos e visualizações
+- **jsPDF** + **html2canvas** para geração de PDFs
 
-Changes made via Lovable will be committed automatically to this repo.
+### Backend
+- **Supabase** (Auth, PostgREST, Storage, Edge Functions)
+- **PostgreSQL** com tabelas JSONB para flexibilidade
+- **Row Level Security (RLS)** para segurança de dados
 
-**Use your preferred IDE**
+### IA e Análise
+- **Edge Functions** para processamento de análise IA
+- **Algoritmos determinísticos** baseados em literatura científica
+- **Referências científicas** de tricoscopia e dermatologia
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 📋 Estrutura de Dados
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Tabela `avaliacoes`
+```sql
+- id: UUID (PK)
+- cliente_id: UUID (FK)
+- user_id: UUID
+- queixa_principal: JSONB
+- dados_clinicos: JSONB
+- tratamentos_anteriores: JSONB
+- historico_saude: JSONB
+- habitos: JSONB
+- historico_familiar: JSONB
+- exame_fisico: JSONB
+- tricoscopia: JSONB
+- informacoes: JSONB
+- analise_ia: JSONB (NOVO)
+- status: TEXT
+- created_at: TIMESTAMP
+- updated_at: TIMESTAMP
+```
 
-Follow these steps:
+### Tabela `clientes`
+```sql
+- id: UUID (PK)
+- user_id: UUID
+- nome: TEXT
+- email: TEXT
+- telefone: TEXT
+- data_nascimento: DATE
+- cpf: TEXT
+- endereco: TEXT
+- cidade: TEXT
+- estado: TEXT
+- observacoes: TEXT
+- consentimento_ia: BOOLEAN (NOVO)
+- consentimento_ia_data: TIMESTAMP (NOVO)
+- created_at: TIMESTAMP
+- updated_at: TIMESTAMP
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Storage Buckets
+- **`tricoscopia`**: Imagens tricoscópicas (10x-200x)
+- **`fotos-cliente`**: Fotos panorâmicas do couro cabeludo
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 🚀 Como Executar o Projeto
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Pré-requisitos
+- Node.js 18+ e npm
+- Conta no Supabase
+- Git
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### Instalação
+
+```bash
+# 1. Clone o repositório
+git clone <URL_DO_REPOSITORIO>
+cd TrichoScalp
+
+# 2. Instale as dependências
+npm install
+
+# 3. Configure as variáveis de ambiente
+cp .env.example .env.local
+# Edite .env.local com suas credenciais do Supabase
+
+# 4. Execute as migrações do banco
+npx supabase db push
+
+# 5. Deploy da Edge Function (opcional)
+npx supabase functions deploy analisar-tricoscopia
+
+# 6. Inicie o servidor de desenvolvimento
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Variáveis de Ambiente
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```env
+VITE_SUPABASE_URL=sua_url_do_supabase
+VITE_SUPABASE_PUBLISHABLE_KEY=sua_chave_publica
+```
 
-**Use GitHub Codespaces**
+## 📊 Estrutura da Análise IA
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Dados Quantitativos
+- **Densidade Capilar**: 0.0 - 1.0 (percentual de cobertura folicular)
+- **Oleosidade**: 0.0 - 1.0 (área oleosa do couro cabeludo)
+- **Descamação**: 0.0 - 1.0 (área descamativa)
+- **Miniaturização**: 0.0 - 1.0 (fios miniaturizados)
+- **Inflamação**: 0.0 - 1.0 (área inflamada)
 
-## What technologies are used for this project?
+### Dados Qualitativos
+- **Resumo**: Interpretação geral da análise
+- **Achados**: Lista de observações específicas
+- **Recomendações**: Orientações personalizadas baseadas nos achados
 
-This project is built with:
+### Comparativo Histórico
+- **Variações**: Comparação com avaliação anterior
+- **Evolução**: Status geral (melhora/piora/estável)
+- **Score**: Pontuação de evolução (-100 a +100)
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🔬 Referências Científicas
 
-## How can I deploy this project?
+O sistema baseia-se em literatura científica reconhecida:
 
-Simply open [Lovable](https://lovable.dev/projects/87f27dc3-1bea-4f9e-9589-7dde3d8569c3) and click on Share -> Publish.
+- Rudnicka, L. et al. (2008). "Hair shafts in trichoscopy: clues for diagnosis"
+- Ross, E.K. et al. (2008). "Videodermoscopy in the evaluation of hair disorders"
+- Miteva, M. & Tosti, A. (2012). "Hair and scalp dermatoscopy"
+- Rakowska, A. et al. (2009). "Dermoscopy in female androgenic alopecia"
 
-## Can I connect a custom domain to my Lovable project?
+Ver [docs/referencias-cientificas.md](docs/referencias-cientificas.md) para lista completa.
 
-Yes, you can!
+## 🔒 Segurança e LGPD
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- **Consentimento Explícito**: Termo de consentimento para análise IA
+- **Armazenamento Seguro**: Imagens criptografadas no Supabase Storage
+- **RLS Policies**: Acesso restrito por usuário
+- **Não Persistência**: PDFs não são armazenados no servidor
+- **Conformidade LGPD**: Direitos de acesso, correção e exclusão
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 📁 Estrutura do Projeto
+
+```
+src/
+├── components/
+│   ├── anamnese/          # Componentes de anamnese
+│   ├── avaliacoes/        # Componentes de avaliações
+│   ├── clientes/          # Componentes de clientes
+│   └── ui/                # Componentes base (shadcn-ui)
+├── hooks/
+│   ├── useAnaliseIA.ts    # Hooks para análise IA
+│   └── useStorageUpload.ts # Hooks para upload
+├── lib/
+│   ├── storage.ts         # Utilitários de storage
+│   ├── ia-anamnese.ts     # Serviço de análise IA
+│   ├── comparativo-avaliacoes.ts # Comparativo
+│   └── referencias-cientificas.ts # Referências
+├── pages/                 # Páginas da aplicação
+└── integrations/
+    └── supabase/          # Configuração Supabase
+
+supabase/
+├── migrations/            # Migrações do banco
+└── functions/             # Edge Functions
+    └── analisar-tricoscopia/
+```
+
+## 🚀 Deploy
+
+### Supabase
+```bash
+# Deploy das migrações
+npx supabase db push
+
+# Deploy da Edge Function
+npx supabase functions deploy analisar-tricoscopia
+```
+
+### Frontend
+O projeto pode ser deployado em qualquer plataforma que suporte React:
+- Vercel
+- Netlify
+- Railway
+- Lovable (recomendado)
+
+## 🤝 Contribuição
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+
+## 📄 Relatório de Tricologia (PDF)
+
+O projeto inclui um módulo completo para geração de relatórios em PDF com base em dados de anamnese, imagens de tricoscopia e análise de IA.
+
+- Bibliotecas usadas: `jspdf`, `html2canvas`, `qrcode`, `recharts`
+- Upload opcional para `Supabase Storage` (bucket `relatorios`)
+- Geração de gráficos e captura via `html2canvas`
+- Inclusão de QR Code e metadados
+
+### Uso rápido
+
+1) Importe e use o hook:
+
+```tsx
+import { usePDFGenerator, useTrichologyReportData } from "@/hooks/usePDFGenerator";
+
+const { generatePDF } = usePDFGenerator();
+const { prepareReportData } = useTrichologyReportData();
+
+// Monte os dados a partir das suas fontes
+const reportData = prepareReportData(paciente, anamnese, imagens, analiseIA, profissional);
+
+await generatePDF(reportData, {
+  theme: 'light',            // 'light' | 'dark'
+  includeQRCode: true,       // adiciona QR code com metadados
+  autoDownload: true,        // efetua download automático
+  uploadToStorage: false     // envia para Supabase Storage se true
+});
+```
+
+2) Upload para Supabase:
+
+```tsx
+await generatePDF(reportData, {
+  uploadToStorage: true,
+  autoDownload: false,
+});
+// URL pública estará disponível em `publicUrl` retornado pelo hook
+```
+
+### Página de teste
+
+- Rota: `/test-pdf`
+- Componentes: `src/components/test/PDFTestComponent.tsx` e `src/pages/TestPDF.tsx`
+- Permite testar geração, download e upload com dados de exemplo
+
+### Requisitos de ambiente
+
+- `.env` com `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`
+- Bucket `relatorios` criado no Supabase Storage
+
+### Compatibilidade e dicas
+
+- `html2canvas`: usa `useCORS` e imagens públicas. Prefira URLs acessíveis/anônimas.
+- Imagens externas: habilite `CORS` ou faça upload para o Storage com URL assinada.
+- `jsPDF`: geração em A4, mantém boa compatibilidade em navegadores modernos.
+- Caso ocorra bloqueio de fontes, use fontes padrão do navegador ou configure fontes incorporadas.
+
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
+
+## 📞 Suporte
+
+Para suporte técnico ou dúvidas sobre o sistema, entre em contato através dos issues do GitHub.
+
+---
+
+**Desenvolvido com ❤️ para a comunidade de tricologia**

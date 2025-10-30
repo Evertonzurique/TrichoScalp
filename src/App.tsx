@@ -11,6 +11,7 @@ import Anamnese from "./pages/Anamnese";
 import Clientes from "./pages/Clientes";
 import SelecionarCliente from "./pages/SelecionarCliente";
 import AvaliacaoHistorico from "./pages/AvaliacaoHistorico";
+import TestPDF from "./pages/TestPDF";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/anamnese/:clienteId" element={<Anamnese />} />
           <Route path="/avaliacoes" element={<AvaliacaoHistorico />} />
           <Route path="/clientes" element={<Clientes />} />
+          <Route path="/test-pdf" element={<TestPDF />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

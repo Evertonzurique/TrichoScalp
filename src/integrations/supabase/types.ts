@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       avaliacoes: {
         Row: {
+          analise_ia: Json | null
           cliente_id: string
           created_at: string
           dados_clinicos: Json | null
@@ -33,6 +34,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          analise_ia?: Json | null
           cliente_id: string
           created_at?: string
           dados_clinicos?: Json | null
@@ -50,6 +52,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          analise_ia?: Json | null
           cliente_id?: string
           created_at?: string
           dados_clinicos?: Json | null
@@ -79,6 +82,8 @@ export type Database = {
       clientes: {
         Row: {
           cidade: string | null
+          consentimento_ia: boolean | null
+          consentimento_ia_data: string | null
           cpf: string | null
           created_at: string
           data_nascimento: string | null
@@ -95,6 +100,8 @@ export type Database = {
         }
         Insert: {
           cidade?: string | null
+          consentimento_ia?: boolean | null
+          consentimento_ia_data?: string | null
           cpf?: string | null
           created_at?: string
           data_nascimento?: string | null
@@ -111,6 +118,8 @@ export type Database = {
         }
         Update: {
           cidade?: string | null
+          consentimento_ia?: boolean | null
+          consentimento_ia_data?: string | null
           cpf?: string | null
           created_at?: string
           data_nascimento?: string | null

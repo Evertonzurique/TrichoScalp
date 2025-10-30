@@ -8,6 +8,34 @@ import { useToast } from "@/hooks/use-toast";
 import AvaliacaoCard from "@/components/avaliacoes/AvaliacaoCard";
 import AvaliacaoDetalhes from "@/components/avaliacoes/AvaliacaoDetalhes";
 
+// ==================== EXEMPLO DE USO DO MÓDULO PDF ====================
+// 
+// Para usar o novo módulo de geração de PDF em outros componentes:
+//
+// import { usePDFGenerator, useTrichologyReportData } from "@/hooks/usePDFGenerator";
+// import { generateTrichologyPDF } from "@/lib/pdf-generator";
+//
+// const { generatePDF, isGenerating, progress } = usePDFGenerator();
+// const { prepareReportData } = useTrichologyReportData();
+//
+// const handleGeneratePDF = async (avaliacao) => {
+//   const reportData = prepareReportData(
+//     avaliacao.cliente,
+//     avaliacao.anamnese,
+//     avaliacao.imagens,
+//     avaliacao.analise_ia,
+//     profissional
+//   );
+//   
+//   await generatePDF(reportData, {
+//     autoDownload: true,
+//     uploadToStorage: true,
+//     theme: 'light'
+//   });
+// };
+//
+// =====================================================================
+
 const AvaliacaoHistorico = () => {
   const [avaliacoes, setAvaliacoes] = useState<any[]>([]);
   const [filteredAvaliacoes, setFilteredAvaliacoes] = useState<any[]>([]);
@@ -15,6 +43,7 @@ const AvaliacaoHistorico = () => {
   const [loading, setLoading] = useState(true);
   const [selectedAvaliacao, setSelectedAvaliacao] = useState<any>(null);
   const [detalhesOpen, setDetalhesOpen] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -71,6 +100,41 @@ const AvaliacaoHistorico = () => {
     setDetalhesOpen(true);
   };
 
+  const handleDeleteAvaliacao = async (avaliacaoId: string) => {
+    try {
+      setDeletingId(avaliacaoId);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
+
+      const { error } = await supabase
+        .from("avaliacoes")
+        .delete()
+        .eq("id", avaliacaoId);
+
+      if (error) throw error;
+
+      setAvaliacoes((prev) => prev.filter((a) => a.id !== avaliacaoId));
+      setFilteredAvaliacoes((prev) => prev.filter((a) => a.id !== avaliacaoId));
+
+      toast({
+        title: "Avaliação excluída",
+        description: "A avaliação foi removida com sucesso.",
+      });
+    } catch (error) {
+      console.error("Erro ao excluir avaliação:", error);
+      toast({
+        title: "Erro ao excluir",
+        description: "Não foi possível excluir a avaliação. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen gradient-card flex items-center justify-center">
@@ -112,12 +176,15 @@ const AvaliacaoHistorico = () => {
         <div className="max-w-4xl mx-auto">
           <div className="mb-6">
             <div className="relative">
+              <label htmlFor="search-client" className="sr-only">Buscar por nome do cliente</label>
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
+                id="search-client"
+                aria-label="Buscar por cliente"
                 placeholder="Buscar por nome do cliente..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-card border-primary/20 shadow-card rounded-lg focus-visible:ring-accent/50 placeholder:text-muted-foreground"
               />
             </div>
           </div>
@@ -138,19 +205,22 @@ const AvaliacaoHistorico = () => {
               {!searchTerm && (
                 <Button
                   onClick={() => navigate("/anamnese/selecionar-cliente")}
-                  className="gradient-primary"
+                  aria-label="Criar nova avaliação capilar"
+                  className="gradient-primary shadow-card"
                 >
                   Nova Avaliação
                 </Button>
               )}
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-6">
               {filteredAvaliacoes.map((avaliacao) => (
                 <AvaliacaoCard
                   key={avaliacao.id}
                   avaliacao={avaliacao}
                   onView={handleViewAvaliacao}
+                  onDelete={handleDeleteAvaliacao}
+                  isDeleting={deletingId === avaliacao.id}
                 />
               ))}
             </div>

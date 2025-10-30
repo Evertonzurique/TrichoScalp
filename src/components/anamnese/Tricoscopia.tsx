@@ -1,11 +1,14 @@
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, X } from "lucide-react";
+import { Upload, X, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useSingleImageUpload } from "@/hooks/useStorageUpload";
+import { Progress } from "@/components/ui/progress";
 
 interface TricoscopiaProps {
   data: any;
   updateData: (data: any) => void;
+  clienteId?: string;
 }
 
 interface AvaliacaoPadraoImages {
@@ -28,8 +31,14 @@ interface AvaliacaoEspecificaImages {
   posteriorSuperior?: string;
 }
 
-const Tricoscopia = ({ data, updateData }: TricoscopiaProps) => {
+const Tricoscopia = ({ data, updateData, clienteId }: TricoscopiaProps) => {
   const { toast } = useToast();
+  
+  // Hook para upload de imagens tricoscópicas
+  const uploadTricoscopia = useSingleImageUpload('tricoscopia', clienteId || '');
+  
+  // Hook para upload de fotos panorâmicas
+  const uploadPanoramicas = useSingleImageUpload('fotos-cliente', clienteId || '');
 
   const avaliacaoPadraoLabels = [
     { key: "frontalEsquerda", label: "Frontal Esquerda" },
@@ -55,7 +64,7 @@ const Tricoscopia = ({ data, updateData }: TricoscopiaProps) => {
     updateData({ ...data, [field]: value });
   };
 
-  const handleImageUpload = (
+  const handleImageUpload = async (
     section: "avaliacaoPadrao" | "avaliacaoEspecifica",
     imageKey: string,
     e: React.ChangeEvent<HTMLInputElement>
@@ -63,15 +72,43 @@ const Tricoscopia = ({ data, updateData }: TricoscopiaProps) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const updatedSection = {
-        ...(data[section] || {}),
-        [imageKey]: reader.result as string,
-      };
-      updateData({ ...data, [section]: updatedSection });
-    };
-    reader.readAsDataURL(file);
+    if (!clienteId) {
+      toast({
+        title: "Erro",
+        description: "ID do cliente não encontrado. Não é possível fazer upload das imagens.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Determinar qual hook usar baseado na seção
+    const uploadHook = section === "avaliacaoPadrao" ? uploadTricoscopia : uploadPanoramicas;
+
+    try {
+      const result = await uploadHook.upload(file);
+      
+      if (result.success && result.url) {
+        const updatedSection = {
+          ...(data[section] || {}),
+          [imageKey]: result.url, // Armazenar URL em vez de Base64
+        };
+        updateData({ ...data, [section]: updatedSection });
+        
+        toast({
+          title: "Sucesso",
+          description: "Imagem enviada com sucesso!",
+        });
+      } else {
+        throw new Error(result.error || 'Erro no upload');
+      }
+    } catch (error) {
+      console.error('Erro no upload:', error);
+      toast({
+        title: "Erro no upload",
+        description: error instanceof Error ? error.message : "Não foi possível enviar a imagem.",
+        variant: "destructive",
+      });
+    }
   };
 
   const removeImage = (
@@ -89,6 +126,8 @@ const Tricoscopia = ({ data, updateData }: TricoscopiaProps) => {
     label: string
   ) => {
     const image = data[section]?.[imageKey];
+    const uploadHook = section === "avaliacaoPadrao" ? uploadTricoscopia : uploadPanoramicas;
+    const isUploading = uploadHook.isUploading;
 
     return (
       <div className="space-y-2">
@@ -103,23 +142,54 @@ const Tricoscopia = ({ data, updateData }: TricoscopiaProps) => {
             <button
               onClick={() => removeImage(section, imageKey)}
               className="absolute top-2 right-2 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+              disabled={isUploading}
             >
               <X className="h-4 w-4" />
             </button>
           </div>
         ) : (
-          <label className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-muted-foreground/25 rounded-lg cursor-pointer hover:border-accent transition-smooth">
-            <Upload className="h-6 w-6 text-muted-foreground mb-1" />
-            <span className="text-xs text-muted-foreground text-center px-2">
-              {label}
-            </span>
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => handleImageUpload(section, imageKey, e)}
-            />
-          </label>
+          <div className="space-y-2">
+            <label className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-muted-foreground/25 rounded-lg cursor-pointer hover:border-accent transition-smooth disabled:cursor-not-allowed disabled:opacity-50">
+              {isUploading ? (
+                <div className="flex flex-col items-center gap-2">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                  <span className="text-xs text-muted-foreground">Enviando...</span>
+                </div>
+              ) : (
+                <>
+                  <Upload className="h-6 w-6 text-muted-foreground mb-1" />
+                  <span className="text-xs text-muted-foreground text-center px-2">
+                    {label}
+                  </span>
+                </>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => handleImageUpload(section, imageKey, e)}
+                disabled={isUploading}
+              />
+            </label>
+            
+            {/* Barra de progresso */}
+            {isUploading && uploadHook.progress && (
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Enviando...</span>
+                  <span>{Math.round(uploadHook.progress.percentage)}%</span>
+                </div>
+                <Progress value={uploadHook.progress.percentage} className="h-1" />
+              </div>
+            )}
+            
+            {/* Mensagem de erro */}
+            {uploadHook.error && (
+              <div className="text-xs text-destructive">
+                {uploadHook.error}
+              </div>
+            )}
+          </div>
         )}
       </div>
     );

@@ -115,10 +115,18 @@ npm run dev
 
 ### Variáveis de Ambiente
 
+Para builds com Vite (local e Vercel), use as chaves abaixo. O cliente aceita ambos os nomes para a chave pública:
+
 ```env
-VITE_SUPABASE_URL=sua_url_do_supabase
-VITE_SUPABASE_PUBLISHABLE_KEY=sua_chave_publica
+VITE_SUPABASE_URL="https://<sua-instancia>.supabase.co"
+VITE_SUPABASE_ANON_KEY="<sua-chave-anon-publica>"
+# Alternativa aceita (caso já esteja usando este nome):
+VITE_SUPABASE_PUBLISHABLE_KEY="<sua-chave-anon-publica>"
+# Alias opcional (não recomendado, mas suportado):
+VITE_SUPABASE_KEY="<sua-chave-anon-publica>"
 ```
+
+Em Vercel, configure em `Settings → Environment Variables` e garanta que as variáveis estejam presentes nos ambientes `Production`, `Preview` e `Development` quando necessário. Após atualizar, faça um redeploy.
 
 ## 📊 Estrutura da Análise IA
 

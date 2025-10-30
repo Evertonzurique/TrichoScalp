@@ -196,7 +196,7 @@ CREATE INDEX IF NOT EXISTS idx_clientes_consentimento_ia ON public.clientes (con
 ### Requisitos do Sistema
 - `Node.js 18+` e `npm`
 - Conta e projeto no `Supabase`
-- Acesso a variáveis de ambiente (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`)
+- Acesso a variáveis de ambiente (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` ou `VITE_SUPABASE_PUBLISHABLE_KEY`)
 
 ### Como Executar/Configurar
 

@@ -2,13 +2,26 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Read environment variables with robust fallbacks for Vercel/Vite builds
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+// Some setups use PUBLISHABLE_KEY naming; support it transparently
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
+// Optional generic key alias
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_KEY as string | undefined;
+
+const supabaseUrl = SUPABASE_URL;
+const supabaseKey = SUPABASE_ANON_KEY || SUPABASE_PUBLISHABLE_KEY || SUPABASE_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  // Surface a clear error to aid debugging in production builds
+  console.error('[Supabase] Ambiente inválido: configure VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY (ou VITE_SUPABASE_PUBLISHABLE_KEY).');
+}
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+export const supabase = createClient<Database>(supabaseUrl!, supabaseKey!, {
   auth: {
     storage: localStorage,
     persistSession: true,

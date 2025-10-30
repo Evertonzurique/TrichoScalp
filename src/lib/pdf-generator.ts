@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import QRCode from 'qrcode';
+import { normalizeUrlScheme } from '@/lib/storage';
 
 // ==================== INTERFACES E TIPOS ====================
 
@@ -611,7 +612,7 @@ export class TrichologyPDFGenerator {
       };
       
       img.onerror = () => reject(new Error(`Falha ao carregar imagem: ${url}`));
-      img.src = url;
+      img.src = normalizeUrlScheme(url);
     });
   }
 
@@ -711,6 +712,16 @@ export async function uploadPDFToSupabase(
     throw new Error(`Erro ao fazer upload do PDF: ${error.message}`);
   }
 
+  // Tentar gerar URL assinada para suportar buckets privados
+  const { data: signedData, error: signedError } = await supabaseClient.storage
+    .from('relatorios')
+    .createSignedUrl(fileName, 60 * 60 * 24 * 365); // 1 ano
+
+  if (!signedError && signedData?.signedUrl) {
+    return signedData.signedUrl;
+  }
+
+  // Fallback para URL pública (apenas se o bucket for público)
   const { data: publicUrlData } = supabaseClient.storage
     .from('relatorios')
     .getPublicUrl(fileName);

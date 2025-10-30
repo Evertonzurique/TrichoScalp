@@ -214,4 +214,53 @@ export function extractPathFromUrl(url: string, bucket: 'tricoscopia' | 'fotos-c
   }
 }
 
+/**
+ * Normaliza esquema para HTTPS, evitando Mixed Content em produção
+ */
+export function normalizeUrlScheme(url: string): string {
+  try {
+    if (!url) return url;
+    const u = new URL(url);
+    if (u.protocol === 'http:') {
+      u.protocol = 'https:';
+      return u.toString();
+    }
+    return url;
+  } catch {
+    return url;
+  }
+}
+
+/**
+ * Resolve URL acessível: se pública em bucket privado, tenta gerar URL assinada
+ */
+export async function ensureAccessibleUrl(
+  bucket: 'tricoscopia' | 'fotos-cliente',
+  url: string
+): Promise<string> {
+  try {
+    const normalized = normalizeUrlScheme(url);
+    // Se já é uma URL assinada, apenas retorna
+    if (normalized.includes('/object/sign/')) return normalized;
+
+    // Se é URL pública, tentar assinar
+    const isPublic = normalized.includes('/object/public/');
+    if (isPublic) {
+      const path = extractPathFromUrl(normalized, bucket);
+      if (path) {
+        const { data, error } = await supabase.storage
+          .from(bucket)
+          .createSignedUrl(path, 60 * 60 * 24 * 365);
+        if (!error && data?.signedUrl) {
+          return data.signedUrl;
+        }
+      }
+    }
+
+    return normalized;
+  } catch {
+    return url;
+  }
+}
+
 

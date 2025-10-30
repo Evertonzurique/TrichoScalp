@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { generateAnamnesePDF } from "@/lib/pdf-generator";
 import { useAnaliseIACompleta } from "@/hooks/useAnaliseIA";
+import { normalizeUrlScheme } from "@/lib/storage";
 import { usePDFGenerator, useTrichologyReportData, usePDFValidation } from "@/hooks/usePDFGenerator";
 import ResultadosIA from "./ResultadosIA";
 import ComparativoAvaliacoes from "./ComparativoAvaliacoes";
@@ -107,24 +108,22 @@ const AvaliacaoDetalhes = ({
   // Extrair URLs das imagens para análise IA
   const getImageUrls = () => {
     const urls: string[] = [];
-    
+    const pushIfValid = (val: unknown) => {
+      if (typeof val === 'string' && val.trim().length > 0) {
+        const normalized = normalizeUrlScheme(val);
+        // aceitar apenas URLs com esquema válido
+        if (normalized.startsWith('https://')) {
+          urls.push(normalized);
+        }
+      }
+    };
+
     if (avaliacao?.tricoscopia?.avaliacaoPadrao) {
-      Object.values(avaliacao.tricoscopia.avaliacaoPadrao).forEach(url => {
-        if (typeof url === 'string') {
-          // Aceitar qualquer string (URL ou caminho); a análise mock não acessa o conteúdo
-          urls.push(url);
-        }
-      });
+      Object.values(avaliacao.tricoscopia.avaliacaoPadrao).forEach(pushIfValid);
     }
-    
     if (avaliacao?.tricoscopia?.avaliacaoEspecifica) {
-      Object.values(avaliacao.tricoscopia.avaliacaoEspecifica).forEach(url => {
-        if (typeof url === 'string') {
-          urls.push(url);
-        }
-      });
+      Object.values(avaliacao.tricoscopia.avaliacaoEspecifica).forEach(pushIfValid);
     }
-    
     return urls;
   };
 

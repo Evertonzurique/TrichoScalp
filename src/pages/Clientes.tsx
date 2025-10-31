@@ -64,9 +64,16 @@ const Clientes = () => {
   }, [navigate]);
 
   const fetchClientes = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+
     const { data, error } = await supabase
       .from("clientes")
       .select("*")
+      .eq("user_id", user.id)
       .order("created_at", { ascending: false });
 
     if (error) {

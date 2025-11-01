@@ -4,6 +4,7 @@ import { Upload, X, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useSingleImageUpload } from "@/hooks/useStorageUpload";
 import { Progress } from "@/components/ui/progress";
+import SafeImage from "@/components/SafeImage";
 
 interface TricoscopiaProps {
   data: any;
@@ -134,7 +135,8 @@ const Tricoscopia = ({ data, updateData, clienteId }: TricoscopiaProps) => {
         <Label className="text-sm font-medium">{label}</Label>
         {image ? (
           <div className="relative group">
-            <img
+            <SafeImage
+              bucket={section === "avaliacaoPadrao" ? "tricoscopia" : "fotos-cliente"}
               src={image}
               alt={label}
               className="w-full h-32 object-cover rounded-lg border"
